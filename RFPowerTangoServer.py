@@ -1,4 +1,3 @@
-import logging
 import sys
 import time
 
@@ -9,9 +8,6 @@ from tango.server import attribute, command
 
 sys.path.append('../TangoUtils')
 from TangoServerPrototype import TangoServerPrototype
-from TangoUtils import Configuration
-from config_logger import config_logger
-from log_exception import log_exception
 
 t0 = time.time()
 OFF_PASSWORD = 'topsecret'
@@ -62,6 +58,7 @@ class RFPowerTangoServer(TangoServerPrototype):
         self.ic = None
         self.iscr = None
         self.ug1 = None
+        self.count = 0
         #
         super().init_device()
         self.power_limit_value = self.config.get('power_limit', 50.0)
@@ -188,8 +185,12 @@ def looping():
                 continue
             p = dev.calculate_anode_power()
             if p > dev.power_limit_value:
-                dev.error('Anode power limit exceeded')
-                dev.pulse_off(OFF_PASSWORD)
+                dev.count += 1
+                if dev.count >= 3:
+                    dev.error('Anode power limit exceeded')
+                    dev.pulse_off(OFF_PASSWORD)
+            else:
+                dev.count = 0
         except:
             dev.log_exception('Error in loop')
 
