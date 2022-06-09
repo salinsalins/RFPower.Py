@@ -14,8 +14,8 @@ OFF_PASSWORD = 'topsecret'
 
 
 class RFPowerTangoServer(TangoServerPrototype):
-    server_version = '1.0'
-    server_name = 'Python RF Power Control Tango Server'
+    server_version_value = '1.0'
+    server_name_value = 'Python RF Power Control Tango Server'
     device_list = []
 
     anode_power = attribute(label="anode_power", dtype=float,
